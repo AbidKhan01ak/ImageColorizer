@@ -5,7 +5,7 @@ import numpy as np
 import cv2
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["http://localhost:3000"])
 UPLOAD_FOLDER = 'static/uploads'
 RESULT_FOLDER = 'static/output'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
