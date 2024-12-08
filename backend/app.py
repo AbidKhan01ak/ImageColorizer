@@ -10,6 +10,12 @@ UPLOAD_FOLDER = 'static/uploads'
 RESULT_FOLDER = 'static/output'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+if not os.path.exists(RESULT_FOLDER):
+    os.makedirs(RESULT_FOLDER)
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['RESULT_FOLDER'] = RESULT_FOLDER
 
