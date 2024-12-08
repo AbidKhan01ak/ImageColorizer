@@ -13,8 +13,8 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['RESULT_FOLDER'] = RESULT_FOLDER
 
-net = cv2.dnn.readNetFromCaffe('./models/colorization_deploy_v2.prototxt','./models/colorization_release_v0.caffemodel')
-pts = np.load('./models/pts_in_hull.npy')
+net = cv2.dnn.readNetFromCaffe('./backend/models/colorization_deploy_v2.prototxt','./backend/models/colorization_release_v0.caffemodel')
+pts = np.load('./backend/models/pts_in_hull.npy')
 
 class8 = net.getLayerId("class8_ab")
 conv8 = net.getLayerId("conv8_313_rh")
