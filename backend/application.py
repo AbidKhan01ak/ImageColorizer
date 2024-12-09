@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"])
+application = Flask(__name__)
+CORS(application, origins=["http://localhost:3000"])
 UPLOAD_FOLDER = 'static/uploads'
 RESULT_FOLDER = 'static/output'
 MODEL_FOLDER = os.path.abspath('./models')
@@ -35,8 +35,8 @@ if not os.path.exists(UPLOAD_FOLDER):
 if not os.path.exists(RESULT_FOLDER):
     os.makedirs(RESULT_FOLDER)
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['RESULT_FOLDER'] = RESULT_FOLDER
+application.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+application.config['RESULT_FOLDER'] = RESULT_FOLDER
 
 if not os.path.exists(MODEL_FOLDER):  # <-- Added this check
     os.makedirs(MODEL_FOLDER)
@@ -114,7 +114,7 @@ def colorize_image(image_path):
     colorized = (255 * colorized).astype("uint8")
 
     filename = os.path.basename(image_path)
-    result_path = os.path.join(app.config['RESULT_FOLDER'], filename)
+    result_path = os.path.join(application.config['RESULT_FOLDER'], filename)
     cv2.imwrite(result_path, colorized)
 
     return result_path
@@ -122,11 +122,11 @@ def colorize_image(image_path):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/')
+@application.route('/')
 def index():
     return 'Flask backend is running!'
 
-@app.route('/upload', methods=['POST'])
+@application.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
@@ -138,7 +138,7 @@ def upload_file():
     
     if file and allowed_file(file.filename):
         filename = file.filename
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file_path = os.path.join(application.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
         colorized_image_path = colorize_image(file_path)
         # Return the relative path to the React frontend
@@ -149,15 +149,15 @@ def upload_file():
     
     return jsonify({'error': 'Invalid file format'}), 400
 
-@app.route('/uploads/<filename>')
+@application.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    return send_from_directory(application.config['UPLOAD_FOLDER'], filename)
 
-@app.route('/output/<filename>')
+@application.route('/output/<filename>')
 def output_file(filename):
-    file_path = os.path.join(app.config['RESULT_FOLDER'], filename)
+    file_path = os.path.join(application.config['RESULT_FOLDER'], filename)
     return send_file(file_path, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(debug=False, port=5000)
+    application.run(debug=False, port=5000)
 
