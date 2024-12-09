@@ -77,6 +77,8 @@ if not os.path.exists(prototxt_path):
     print(f"Error: {prototxt_path} does not exist!")
 if not os.path.exists(caffemodel_path):
     print(f"Error: {caffemodel_path} does not exist!")
+
+
 net = cv2.dnn.readNetFromCaffe(
     os.path.join(MODEL_FOLDER, 'colorization_deploy_v2.prototxt'),
     os.path.join(MODEL_FOLDER, 'colorization_release_v0.caffemodel')
