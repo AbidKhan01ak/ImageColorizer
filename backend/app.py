@@ -25,6 +25,8 @@ AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
 
 MODEL_FILES = {
     "colorization_release_v0.caffemodel": "colorization_release_v0.caffemodel",
+    "colorization_deploy_v2.prototxt": "colorization_deploy_v2.prototxt",
+    "pts_in_hull.npy": "pts_in_hull.npy",
 }
 
 if not os.path.exists(UPLOAD_FOLDER):
@@ -71,7 +73,7 @@ net = cv2.dnn.readNetFromCaffe(
     os.path.join(MODEL_FOLDER, 'colorization_deploy_v2.prototxt'),
     os.path.join(MODEL_FOLDER, 'colorization_release_v0.caffemodel')
 )
-pts = np.load('./models/pts_in_hull.npy')
+pts = np.load(os.path.join(MODEL_FOLDER,'pts_in_hull.npy'))
 
 
 class8 = net.getLayerId("class8_ab")
