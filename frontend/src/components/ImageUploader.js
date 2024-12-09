@@ -17,9 +17,6 @@ const ImageUploader = ({ setImageUrl }) => {
         event.preventDefault();
         if (!file) return;
 
-        const formData = new FormData();
-        formData.append('file', file);
-
         uploadImage(file, setImageUrl, setLoading, setError);
     };
 

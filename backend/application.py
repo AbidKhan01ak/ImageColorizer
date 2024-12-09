@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify, send_from_directory, send_file
 import os
 from flask_cors import CORS
-import numpy as np 
+import numpy as np
 import cv2
 import boto3
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
-
+import shutil
+import time
+import threading
 # Load environment variables from .env file
 load_dotenv()
 
@@ -46,7 +48,7 @@ def download_from_s3(file_key, destination):
     try:
         # Check if the file exists before attempting to download
         s3_client.head_object(Bucket=AWS_BUCKET_NAME, Key=file_key)
-        
+
         # If the object exists, download it
         print(f"Downloading {file_key} from S3...")
         s3_client.download_file(AWS_BUCKET_NAME, file_key, destination)
@@ -130,12 +132,12 @@ def index():
 def upload_file():
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
-    
+
     file = request.files['file']
 
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
-    
+
     if file and allowed_file(file.filename):
         filename = file.filename
         file_path = os.path.join(application.config['UPLOAD_FOLDER'], filename)
@@ -146,7 +148,7 @@ def upload_file():
             'output_url': f'/output/{os.path.basename(colorized_image_path)}',
             'original_url': f'/uploads/{filename}'
         })
-    
+
     return jsonify({'error': 'Invalid file format'}), 400
 
 @application.route('/uploads/<filename>')
@@ -158,6 +160,29 @@ def output_file(filename):
     file_path = os.path.join(application.config['RESULT_FOLDER'], filename)
     return send_file(file_path, as_attachment=True)
 
-if __name__ == '__main__':
-    application.run(debug=False, port=5000)
+def clear_directory(directory):
+        #check if  directory exists
+    if os.path.exists(directory):
+        for filename in os.listdir(directory):
+            file_path = os.path.join(directory,filename)
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print(f"Error while deleting {file_path}: {e}")
+#Function to clear both the uploads and output directories every 10 minutes
+def clear_data_periodically():
+        clear_directory(application.config['UPLOAD_FOLDER'])
+        clear_directory(application.config['RESULT_FOLDER'])
+        print("Cleared data from uploads and output folders.")
 
+        #call this function again after 10 minutes
+        threading.Timer(600, clear_data_periodically).start()
+
+#start the periodic task when application starts
+clear_data_periodically()
+
+if __name__ == '__main__':
+    application.run(debug=False,host='0.0.0.0', port=5000)
