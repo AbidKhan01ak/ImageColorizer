@@ -14,7 +14,7 @@ app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])
 UPLOAD_FOLDER = 'static/uploads'
 RESULT_FOLDER = 'static/output'
-MODEL_FOLDER = './models'
+MODEL_FOLDER = os.path.abspath('./models')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # Load AWS credentials from environment variables
@@ -69,6 +69,14 @@ def ensure_model_files():
 
 # Ensure model files are downloaded before initializing the network
 ensure_model_files()
+
+prototxt_path = os.path.join(MODEL_FOLDER, 'colorization_deploy_v2.prototxt')
+caffemodel_path = os.path.join(MODEL_FOLDER, 'colorization_release_v0.caffemodel')
+
+if not os.path.exists(prototxt_path):
+    print(f"Error: {prototxt_path} does not exist!")
+if not os.path.exists(caffemodel_path):
+    print(f"Error: {caffemodel_path} does not exist!")
 net = cv2.dnn.readNetFromCaffe(
     os.path.join(MODEL_FOLDER, 'colorization_deploy_v2.prototxt'),
     os.path.join(MODEL_FOLDER, 'colorization_release_v0.caffemodel')
