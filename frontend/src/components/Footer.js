@@ -11,6 +11,7 @@ const Footer = () => {
                     &copy; 2024 <span className="mr-5 text-zinc-200">Abid Khan</span>
                 </p>
             </div>
+            <a href="https://google.com" className='text-xs decoration-neutral-50'>Visit my portfolio here!</a>
         </footer>
     );
 }

@@ -24,7 +24,7 @@ AWS_BUCKET_NAME = os.getenv('AWS_BUCKET_NAME')
 AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
 AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
 
-
+#model files are in google drive
 MODEL_FILES = {
     "colorization_release_v0.caffemodel": "colorization_release_v0.caffemodel",
     "colorization_deploy_v2.prototxt": "colorization_deploy_v2.prototxt",
